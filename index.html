@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Поздравление</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family: Arial, sans-serif;
+background:#f6f6f6;
+color:#222;
+}
+
+.wrapper{
+max-width:900px;
+margin:auto;
+padding:32px 18px 60px;
+}
+
+.hero{
+text-align:center;
+margin-bottom:32px;
+}
+
+.hero h1{
+font-size:clamp(28px,5vw,54px);
+margin-bottom:16px;
+}
+
+.hero p{
+font-size:18px;
+line-height:1.6;
+max-width:700px;
+margin:auto;
+}
+
+/* Галерея */
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:16px;
+margin-bottom:36px;
+}
+
+.card{
+aspect-ratio:1/1;
+overflow:hidden;
+border-radius:20px;
+background:#ddd;
+cursor:pointer;
+box-shadow:0 4px 18px rgba(0,0,0,.08);
+transition:.25s;
+}
+
+.card:hover{
+transform:translateY(-4px);
+}
+
+.card img{
+width:100%;
+height:100%;
+object-fit:cover;
+display:block;
+}
+
+/* Видео */
+
+.video-block{
+border-radius:24px;
+overflow:hidden;
+box-shadow:0 6px 22px rgba(0,0,0,.1);
+background:white;
+}
+
+.video-title{
+padding:18px;
+font-size:24px;
+text-align:center;
+font-weight:bold;
+}
+
+.video-wrap{
+position:relative;
+padding-bottom:56.25%;
+height:0;
+}
+
+.video-wrap iframe{
+position:absolute;
+width:100%;
+height:100%;
+left:0;
+top:0;
+border:0;
+}
+
+/* Lightbox */
+
+.lightbox{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.94);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:1000;
+padding:30px;
+}
+
+.lightbox.active{
+display:flex;
+}
+
+.lightbox img{
+max-width:92vw;
+max-height:85vh;
+border-radius:16px;
+}
+
+.close,
+.nav{
+position:fixed;
+color:white;
+font-size:42px;
+cursor:pointer;
+user-select:none;
+}
+
+.close{
+top:20px;
+right:28px;
+}
+
+.prev{
+left:20px;
+}
+
+.next{
+right:20px;
+}
+
+.hint{
+position:fixed;
+bottom:30px;
+color:#ccc;
+font-size:14px;
+}
+
+/* mobile */
+
+@media(max-width:600px){
+
+.gallery{
+gap:12px;
+}
+
+.hero p{
+font-size:16px;
+}
+
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+
+<section class="hero">
+<h1>С Днём Рождения 🎉</h1>
+<p>
+Тут твои воспоминания, моменты и небольшой сюрприз в конце.
+Нажимай на фото, чтобы открыть их крупно.
+</p>
+</section>
+
+
+<section class="gallery">
+
+<!-- Замени пути на свои фото -->
+<div class="card"><img src="images/1.jpg"></div>
+<div class="card"><img src="images/2.jpg"></div>
+
+<div class="card"><img src="images/3.jpg"></div>
+<div class="card"><img src="images/4.jpg"></div>
+
+<div class="card"><img src="images/5.jpg"></div>
+<div class="card"><img src="images/6.jpg"></div>
+
+<div class="card"><img src="images/7.jpg"></div>
+<div class="card"><img src="images/8.jpg"></div>
+
+<div class="card"><img src="images/9.jpg"></div>
+<div class="card"><img src="images/10.jpg"></div>
+
+<div class="card"><img src="images/11.jpg"></div>
+<div class="card"><img src="images/12.jpg"></div>
+
+</section>
+
+
+<section class="video-block">
+
+<video controls preload="metadata" playsinline width="100%" poster="preview.jpg">
+  <source src="video.mp4" type="video/mp4">
+</video>
+
+</section>
+
+</div>
+
+
+<!-- LIGHTBOX -->
+
+<div class="lightbox" id="lightbox">
+<div class="close" id="close">&times;</div>
+<div class="nav prev" id="prev">&#10094;</div>
+
+<img id="lightboxImg" src="">
+
+<div class="nav next" id="next">&#10095;</div>
+<div class="hint">← → листать фото</div>
+</div>
+
+
+<script>
+const images = [...document.querySelectorAll('.card img')];
+const lightbox = document.getElementById('lightbox');
+const lbImg = document.getElementById('lightboxImg');
+
+let current = 0;
+
+function showImage(index){
+current=index;
+lbImg.src=images[index].src;
+lightbox.classList.add('active');
+}
+
+images.forEach((img,index)=>{
+img.addEventListener('click',()=>showImage(index))
+});
+
+function next(){
+current=(current+1)%images.length;
+lbImg.src=images[current].src;
+}
+
+function prev(){
+current=(current-1+images.length)%images.length;
+lbImg.src=images[current].src;
+}
+
+document.getElementById('next').onclick=next;
+document.getElementById('prev').onclick=prev;
+
+document.getElementById('close').onclick=()=>{
+lightbox.classList.remove('active');
+};
+
+lightbox.addEventListener('click',(e)=>{
+if(e.target===lightbox){
+lightbox.classList.remove('active');
+}
+});
+
+document.addEventListener('keydown',(e)=>{
+if(!lightbox.classList.contains('active')) return;
+
+if(e.key==="ArrowRight") next();
+if(e.key==="ArrowLeft") prev();
+if(e.key==="Escape"){
+lightbox.classList.remove('active');
+}
+});
+</script>
+
+</body>
+</html>
